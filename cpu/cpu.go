@@ -25,62 +25,59 @@ type Cpu struct {
 }
 
 // Addr_mode_t is a function type for addressing modes
-type Addr_mode_t func(*Cpu) uint16
+type Addr_mode_t func(*Cpu) uint8
 
-func (c *Cpu) Imm() uint16 {
-	return c.PC
+func (c *Cpu) Imm() uint8 {
+	return memory.Read(c.PC)
 }
 
-func (c *Cpu) Zpg() uint16 {
-	low := memory.Read(c.PC)
-	return uint16(low)
+func (c *Cpu) Zpg() uint8 {
+	return memory.Read(uint16(memory.Read(c.PC)))
 }
 
-func (c *Cpu) Zpx() uint16 {
-	addr := uint16(memory.Read(c.PC))
-	return (addr + uint16(c.X)) & 0xff
+func (c *Cpu) Zpx() uint8 {
+	return memory.Read(uint16(memory.Read(c.PC) + c.X))
 }
 
-func (c *Cpu) Zpy() uint16 {
-	addr := uint16(memory.Read(c.PC))
-	return (addr + uint16(c.Y)) & 0xff
+func (c *Cpu) Zpy() uint8 {
+	return memory.Read(uint16(memory.Read(c.PC) + c.Y))
 }
 
-func (c *Cpu) Inx() uint16 {
+func (c *Cpu) Inx() uint8 {
 	addr := uint16(memory.Read(c.PC)) + uint16(c.X)
 	low := memory.Read(addr)
 	high := memory.Read(addr + 1)
-	return (uint16(high) << 8) | uint16(low)
+	return memory.Read((uint16(high) << 8) | uint16(low))
 }
 
-func (c *Cpu) Iny() uint16 {
+func (c *Cpu) Iny() uint8 {
 	addr := uint16(memory.Read(c.PC))
 	low := memory.Read(addr)
 	high := memory.Read(addr + 1)
-	return ((uint16(high) << 8) | uint16(low)) + uint16(c.Y)
+	return memory.Read(((uint16(high) << 8) | uint16(low)) + uint16(c.Y))
 }
 
-func (c *Cpu) Abs() uint16 {
+func (c *Cpu) Abs() uint8 {
 	low := memory.Read(c.PC)
 	high := memory.Read(c.PC + 1)
-	return (uint16(high) << 8) | uint16(low)
+	return memory.Read((uint16(high) << 8) | uint16(low))
 }
 
-func (c *Cpu) Abx() uint16 {
+func (c *Cpu) Abx() uint8 {
 	low := memory.Read(c.PC)
 	high := memory.Read(c.PC + 1)
-	return (uint16(high) << 8) | uint16(low) + uint16(c.X)
+	return memory.Read((uint16(high) << 8) | uint16(low) + uint16(c.X))
 }
 
-func (c *Cpu) Aby() uint16 {
+func (c *Cpu) Aby() uint8 {
 	low := memory.Read(c.PC)
 	high := memory.Read(c.PC + 1)
-	return (uint16(high) << 8) | uint16(low) + uint16(c.Y)
+	return memory.Read((uint16(high) << 8) | uint16(low) + uint16(c.Y))
 }
 
-func (c *Cpu) Ind() uint16 {
+func (c *Cpu) Ind() uint8 {
 	low := memory.Read(c.PC)
 	high := memory.Read(c.PC + 1)
 	addr := (uint16(high) << 8) | uint16(low)
-	return uint16(memory.Read(addr)) | (uint16(memory.Read(addr+1)) << 8)
+	return memory.Read(uint16(memory.Read(addr)) | (uint16(memory.Read(addr+1)) << 8))
 }

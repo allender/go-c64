@@ -9,5 +9,5 @@ import (
 
 func main() {
 	memory.MemoryLoadFromFile("data/rom.bin", 0xe000)
-	fmt.Printf("%v", cpu.Opcodes[0].Opcode)
+	fmt.Printf("%v", cpu.Opcodes[5].Opcode)
 }

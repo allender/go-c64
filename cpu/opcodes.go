@@ -257,10 +257,8 @@ var _opcodes = []_Opcode{
 var Opcodes [256]*_Opcode
 
 func init() {
-	var opcode uint8 = 0
-	for range Opcodes {
-		for ; _opcodes[opcode].Opcode != opcode; opcode++ {
-		}
-		Opcodes[opcode] = &_opcodes[opcode]
+	for i := range _opcodes {
+		val := _opcodes[i].Opcode
+		Opcodes[val] = &_opcodes[i]
 	}
 }
